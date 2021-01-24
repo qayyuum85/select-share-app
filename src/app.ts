@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { GoogleGeoCodingResponse } from './types';
-const gmap = require('load-google-maps-api');
+import { Loader } from '@googlemaps/js-api-loader';
 
 const form = document.querySelector('form')!;
 const addressInput = document.getElementById('address')! as HTMLInputElement;
@@ -8,19 +8,20 @@ const addressInput = document.getElementById('address')! as HTMLInputElement;
 const apiKey = process.env.GOOGLE_API_KEY!;
 
 // Load the map
-gmap({ key: apiKey })
-  .then(function (googleMaps: any) {
-    new googleMaps.Map(document.querySelector('#map')!, {
-      center: {
-        lat: 40.7484405,
-        lng: -73.9944191,
-      },
-      zoom: 12,
+const loader = new Loader({
+  apiKey: apiKey,
+  version: 'weekly',
+});
+
+loader
+  .load()
+  .then(() => {
+    new google.maps.Map(document.getElementById('map') as HTMLElement, {
+      center: { lat: -34.397, lng: 150.644 },
+      zoom: 8,
     });
   })
-  .catch(function (error: unknown) {
-    console.error(error);
-  });
+  .catch((error) => console.log(error));
 
 function searchAddressHandler(event: Event) {
   event.preventDefault();
